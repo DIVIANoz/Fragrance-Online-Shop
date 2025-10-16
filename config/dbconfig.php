@@ -1,12 +1,13 @@
 <?php
-$host = "localhost";   
-$user = "root";        
-$pass = "";           
-$dbname = "aura_db";   
+$servername = "localhost";
+$username = "root";      
+$password = "";          
+$database = "aura_db";   
 
-$conn = new mysqli($host, $user, $pass, $dbname);
+$conn = mysqli_connect($servername, $username, $password, $database);
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
 }
+
 ?>
