@@ -1,44 +1,31 @@
 <?php
-
 session_start();
 include '../config/dbconfig.php';
 
-$message = '';
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $username = mysqli_real_escape_string($conn, $_POST['username']);
+    $password = md5($_POST['password']);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim($_POST['email']);
-    $password = $_POST['password'];
+    $query = "SELECT * FROM users WHERE username='$username' AND password='$password'";
+    $result = mysqli_query($conn, $query);
 
-    $stmt = $conn->prepare("SELECT id, username, password, role FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $stmt->store_result();
+    if (mysqli_num_rows($result) == 1) {
+        $user = mysqli_fetch_assoc($result);
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['role'] = $user['role'];
 
-    if ($stmt->num_rows > 0) {
-        $stmt->bind_result($id, $username, $hashed_password, $role);
-        $stmt->fetch();
-
-        if (password_verify($password, $hashed_password)) {
-            $_SESSION['user_id'] = $id;
-            $_SESSION['username'] = $username;
-            $_SESSION['role'] = $role;
-
-            if ($role === 'admin') {
-                header("Location: add_product.php");
-            } else {
-                header("Location: ../index.php");
-            }
-            exit;
+        if ($user['role'] === 'admin') {
+            header("Location: add_product.php");
         } else {
-            $message = "Invalid password.";
+            header("Location: ../index.php");
         }
+        exit;
     } else {
-        $message = "No account found with that email.";
+        echo "<p style='color:red;'>Invalid username or password</p>";
     }
-
-    $stmt->close();
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

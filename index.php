@@ -25,9 +25,12 @@ session_start();
                 </ul>
 
                 <ul class="right-actions">
-                    <li><a href="Page/login.php">LOG IN</a></li>
-                    <li><a href="Page/signup.php" class="signup-btn">SIGN UP</a></li>
+                    <?php if (!isset($_SESSION['username'])): ?>
+                        <li><a href="Page/login.php">LOG IN</a></li>
+                        <li><a href="Page/signup.php" class="signup-btn">SIGN UP</a></li>
+                    <?php endif; ?>
                 </ul>
+
             </nav>
         </div>
     </header>
